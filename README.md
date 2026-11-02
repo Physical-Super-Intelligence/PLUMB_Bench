@@ -1,104 +1,137 @@
-# PLUMB-Bench: A Physically Verified Benchmark for Precise, Generalizable Robot Manipulation
+<div align="center">
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![MuJoCo 3.5.0](https://img.shields.io/badge/MuJoCo-3.5.0-4b6584.svg)](https://mujoco.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/affordbench_wordmark_white.svg">
+  <img src="assets/brand/affordbench_wordmark.svg" alt="PLUMB-Bench" height="60">
+</picture>
 
-**Yeungnam University** &middot; **Physical Superintelligence**
+### A Physically Verified Benchmark for Precise, Generalizable Robot Manipulation
 
-**Project page:** [physical-super-intelligence.github.io/PLUMB_Bench](https://physical-super-intelligence.github.io/PLUMB_Bench/)
+**Yeungnam University** &nbsp;·&nbsp; **Physical Superintelligence**
 
-![One multi-goal task per workcell, at its start and after the oracle completed it](assets/figures/paper/teaser.jpg)
+[**🌐 Project Page**](https://physical-super-intelligence.github.io/PLUMB_Bench/) &nbsp;|&nbsp; [**⚡ Quick Start**](#-quick-start) &nbsp;|&nbsp; [**📊 Validation**](#-validation) &nbsp;|&nbsp; [**📝 Citation**](#-citation)
+
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads/) [![MuJoCo 3.5.0](https://img.shields.io/badge/MuJoCo-3.5.0-4B6584)](https://mujoco.org/) [![Tasks](https://img.shields.io/badge/tasks-210-A7444E)](#-tasks) [![Goals](https://img.shields.io/badge/ordered%20goals-343-A7444E)](#-tasks) [![License: MIT](https://img.shields.io/badge/License-MIT-F5C518)](LICENSE)
+
+<img src="assets/figures/paper/teaser.jpg" alt="One multi-goal task per workcell, at its start and after the privileged oracle completed it" width="100%">
+
+<sub>One multi-goal task per workcell, at its start and after the privileged oracle completed it.</sub>
+
+</div>
+
+<br>
+
+> [!IMPORTANT]
+> **A placement counts only when the object is released, supported, at rest, and within 2–8 mm of its goal.**
+> Goal poses are found by letting each object settle in its target, so every goal is physically attainable, and a
+> body that slides, tips, or binds on a rim fails exactly as it would on a real robot.
 
 **PLUMB-Bench** is a MuJoCo benchmark of **210 instruction-accurate manipulation tasks in seven domains**, from shaft
 seating and electronics assembly to burger building, espresso service, and centrifuge loading. Every instruction
-compiles to an ordered conjunction of physical goal predicates (343 goals), and a placement counts only when the body
-is **released, supported, at rest, and within 2–8 mm** of a goal pose calibrated by letting the body settle in its
-target, or wholly inside its target region. A five-level hierarchy shifts layout, appearance, friction, and mass on
-paired seeds, and matched Base/Dynamic rollouts displace objects mid-execution. A privileged closed-loop oracle
-certifies every condition (95.6–99.9% over 6,300 episodes), and random and null policies solve none of 5,040.
+compiles to an ordered conjunction of physical goal predicates. Five paired levels shift layout, appearance,
+friction, and mass, and matched Base/Dynamic rollouts displace objects mid-execution. A privileged closed-loop oracle
+certifies every condition, and random and null policies solve none.
 
-## What counts as success
+<table>
+  <tr>
+    <td align="center" width="25%"><h2>210</h2>tasks in 7 domains<br>over 6 workcells</td>
+    <td align="center" width="25%"><h2>343</h2>ordered goals of<br>8 predicate types</td>
+    <td align="center" width="25%"><h2>2–8 mm</h2>placement tolerance on<br>settled goal poses</td>
+    <td align="center" width="25%"><h2>921</h2>matched mid-execution<br>event pairs</td>
+  </tr>
+</table>
 
-| Condition | Requirement |
-| :--- | :--- |
-| Released | no finger touches the body |
-| Supported | a non-robot body carries it, after it was lifted at least 2 cm |
-| At rest | linear speed < 0.02 m/s and angular speed < 0.2 rad/s |
-| Upright | tilt at most 5° on precision workcells, 15° elsewhere |
-| On target | within ε<sub>xy</sub> of the settled goal pose (2 mm on precision workcells, 8 mm elsewhere, 6 mm for two loose fits), or the whole footprint inside a target region |
+## 🎯 What counts as success
 
-Goals are ordered: a goal counts only when it becomes true after every goal ordered before it, so a button pressed too
-early or a part already in place does not count. Besides placements (`On`), goals can require a latching button
+| | Condition | Requirement |
+| :-: | :--- | :--- |
+| 1 | **Released** | no finger touches the body |
+| 2 | **Supported** | a non-robot body carries it, after it was lifted at least 2 cm |
+| 3 | **At rest** | linear speed < 0.02 m/s and angular speed < 0.2 rad/s |
+| 4 | **Upright** | tilt at most 5° on precision workcells, 15° elsewhere |
+| 5 | **On target** | within ε<sub>xy</sub> of the settled goal pose (2 mm on precision workcells, 8 mm elsewhere, 6 mm for two loose fits), or the whole footprint inside a target region |
+
+Goals are **ordered**: a goal counts only when it becomes true after every goal ordered before it, so a button pressed
+too early or a part already in place does not count. Besides placements (`On`), goals can require a latching button
 pressed (`Pressed`), a drawer or vise jaw closed (`Closed`), a body slid without lifting (`Slid`), a body held above a
 target (`HeldOver`), a hover or touch held for consecutive steps (`GripperAbove`, `Touching`), or a body raised
-(`Lifted`).
+(`Lifted`). There is no attachment, snapping, or teleport: grasping is frictional and force-limited.
 
-Goal poses are not set by hand: when a task is built, every goal body is lowered into its target and simulated to rest,
-and the settled pose becomes the goal pose (a drift of more than 5 mm rejects the task). There is no attachment,
-snapping, or teleport; grasping is frictional and force-limited, so every goal is physically attainable by
-construction.
+## 🧩 Tasks
 
-## Tasks
+| Domain | Workcells | Example instruction | Goals | Tol. (mm / °) |
+| :--- | :--- | :--- | :-: | :-: |
+| **D1** Industrial | assembly jig, electronics | *"Seat the transmission shaft in the jig bore."* | 1 | 2 / 5 |
+| **D2** Culinary | burger, espresso | *"Crown the burger: put the top bun on the tomato slice."* | 1 | 8 / 15 |
+| **D3** Domestic | sorting table | *"Stack the green cylinder on the red block."* | 1–2 | 8 / 15 |
+| **D4** Laboratory | laboratory bench | *"Put the lid on the centrifuge."* | 1 | 2 / 5 |
+| **D5** Long-horizon | five workcells | *"Build the burger on the bottom bun on the cutting board: patty, then cheese, then tomato, then the top bun."* | 2–5 | 2–8 / 5–15 |
+| **D6** Precision chain | jig, electronics, lab | *"Seat the shaft in the jig bore, slide the bearing ring over it, then close the vise jaw."* | 2–4 | 2 / 5 |
+| **D7** Service chain | burger, espresso, sorting | *"Put the mug on the drip tray, press the brew button, then put the mug on the saucer."* | 2–6 | 8 / 15 |
 
-| Domain | Workcells | Example instruction | Goals per task | Tolerance (mm / °) |
-| :--- | :--- | :--- | :---: | :---: |
-| D1 Industrial | assembly jig, electronics | "Seat the transmission shaft in the jig bore." | 1 | 2 / 5 |
-| D2 Culinary | burger, espresso | "Crown the burger: put the top bun on the tomato slice." | 1 | 8 / 15 |
-| D3 Domestic | sorting table | "Stack the green cylinder on the red block." | 1–2 | 8 / 15 |
-| D4 Laboratory | laboratory bench | "Put the lid on the centrifuge." | 1 | 2 / 5 |
-| D5 Long-horizon | five workcells | "Build the burger on the bottom bun on the cutting board: patty, then cheese, then tomato, then the top bun." | 2–5 | 2–8 / 5–15 |
-| D6 Precision chain | jig, electronics, lab | "Seat the shaft in the jig bore, slide the bearing ring over it, then close the vise jaw." | 2–4 | 2 / 5 |
-| D7 Service chain | burger, espresso, sorting | "Put the mug on the drip tray, press the brew button, then put the mug on the saucer." | 2–6 | 8 / 15 |
+<p align="center"><img src="assets/figures/paper/stats.png" alt="Goals per task, goal predicates, and placement tolerances" width="100%"></p>
 
 Each domain has 30 tasks. A simulated Franka Panda acts with 7-D delta actions (TCP increment, yaw, gripper) at 20 Hz;
 observations are a workcell RGB view (640×660), a wrist RGB view (300×420), optional depth, and proprioception. The
 step budget is 400 steps for one goal plus 250 per further goal.
 
-## Distribution shift
+## 🌪️ Distribution shift
 
-Suites are paired on seeds, so a change in success measures the shift rather than a new scene.
+Suites are **paired on seeds**, so a change in success measures the shift rather than a new scene.
 
-| Level | `--suites` name | What changes |
+| Level | `--suites` | What changes |
 | :--- | :--- | :--- |
-| L1 Nominal | `nominal` | starts uniform in each object's region; initial TCP jittered by ±1.5 cm |
-| L2 Spatial | `p2_spatial` | region starts moved by 7–12 cm outside the L1 support, yaw 45–90° |
-| L3 Visual | `p3_visual` | light intensity ×0.5–1.5, light positions ±0.5 m |
-| Color | `p1_object` | colors of the moved objects ±25% |
-| L4 Physical | `p4_physical` | sliding friction μ ~ U(0.12, 0.25) on moved objects and finger pads; mass and inertia ×1.8–2.5 |
-| L5 Compound | `combined_ood` | L2, L3, L4, and color jointly |
+| **L1** Nominal | `nominal` | starts uniform in each object's region; initial TCP jittered by ±1.5 cm |
+| **L2** Spatial | `p2_spatial` | region starts moved by 7–12 cm outside the L1 support, yaw 45–90° |
+| **L3** Visual | `p3_visual` | light intensity ×0.5–1.5, light positions ±0.5 m |
+| **Color** | `p1_object` | colors of the moved objects ±25% |
+| **L4** Physical | `p4_physical` | sliding friction μ ~ U(0.12, 0.25) on moved objects and finger pads; mass and inertia ×1.8–2.5 |
+| **L5** Compound | `combined_ood` | L2, L3, L4, and color jointly |
 
 **Mid-execution events.** Following LIBERO-MAX, a Base rollout and a Dynamic rollout share the task, seed, initial
 state, and executed action prefix; when the hand first arrives above the event body, the Dynamic rollout displaces it
 by 3 cm along ±x or ±y at rest and hands control back to the policy. Outcomes are preserved success, regression,
-recovery, or persistent failure; we report the paired change ΔSR and the conditional regression rate CRR.
+recovery, or persistent failure, summarized by the paired change ΔSR and the conditional regression rate CRR.
 
-## Validation
+<p align="center"><img src="assets/figures/paper/compare.png" alt="PLUMB-Bench compared with Meta-World and the LIBERO family along nine design dimensions" width="100%"></p>
+<p align="center"><sub>PLUMB-Bench against Meta-World and the LIBERO family along nine design dimensions.</sub></p>
+
+## 📊 Validation
 
 Oracle success (%) over all 210 tasks, 5 episodes per task and condition, with 95% task-bootstrap intervals:
 
 | Condition | Oracle | Random | Null |
-| :--- | :---: | :---: | :---: |
-| L1 Nominal | 99.9 [99.7, 100.0] | 0 / 630 | 0 / 210 |
-| L3 Visual | 99.9 [99.7, 100.0] | 0 / 630 | 0 / 210 |
-| Color | 99.9 [99.7, 100.0] | 0 / 630 | 0 / 210 |
-| L4 Physical | 98.9 [98.1, 99.5] | 0 / 630 | 0 / 210 |
-| L2 Spatial | 97.7 [96.4, 98.9] | 0 / 630 | 0 / 210 |
-| L5 Compound | 95.6 [94.0, 97.1] | 0 / 630 | 0 / 210 |
+| :--- | :-: | :-: | :-: |
+| L1 Nominal | **99.9** [99.7, 100.0] | 0 / 630 | 0 / 210 |
+| L3 Visual | **99.9** [99.7, 100.0] | 0 / 630 | 0 / 210 |
+| Color | **99.9** [99.7, 100.0] | 0 / 630 | 0 / 210 |
+| L4 Physical | **98.9** [98.1, 99.5] | 0 / 630 | 0 / 210 |
+| L2 Spatial | **97.7** [96.4, 98.9] | 0 / 630 | 0 / 210 |
+| L5 Compound | **95.6** [94.0, 97.1] | 0 / 630 | 0 / 210 |
 
-Three probes show that success requires closed-loop precision rather than recall:
+Three probes show that success requires **closed-loop precision rather than recall**:
 
-- **Trajectory memorization.** Open-loop replay of a successful oracle trajectory reproduces all 629 episodes on the
-  same seed, but succeeds in 8.9% of new layouts from the same nominal distribution (oracle: 100%) and in 81.8% when
-  only friction and mass change on the same layout (oracle: 99.0%).
-- **Millimetre sensitivity.** Offsetting the oracle's goal estimate by 3 mm halves success on the 55 tasks whose
-  tightest goal allows 2 mm (50.9%); both point tiers reach 0% at 12 mm.
-- **Mid-execution events.** Over 921 matched 3 cm displacements on 154 tasks, the oracle keeps 97.5% Dynamic success
-  (CRR 2.4%), while continuing the Base actions open loop keeps 1.4% (CRR 98.6%).
+<table>
+  <tr>
+    <th width="33%">🔁 Trajectory memorization</th>
+    <th width="33%">📏 Millimetre sensitivity</th>
+    <th width="33%">⚡ Mid-execution events</th>
+  </tr>
+  <tr>
+    <td align="center"><h3>8.9% <sub>vs</sub> 100%</h3>open-loop replay vs oracle<br>on new layouts</td>
+    <td align="center"><h3>50.9%</h3>oracle success on 2 mm tasks<br>with a 3 mm goal error</td>
+    <td align="center"><h3>1.4% <sub>vs</sub> 97.5%</h3>Dynamic success, open loop<br>vs oracle (921 pairs)</td>
+  </tr>
+  <tr>
+    <td>Replaying a successful trajectory reproduces all 629 episodes on the same seed, but not a new layout from the same distribution.</td>
+    <td>Both point tiers reach 0% at 12 mm, an error that a 3 cm success check would still accept.</td>
+    <td>The oracle re-plans its grasp (CRR 2.4%); continuing the Base actions regresses in 907 of 920 solved cases.</td>
+  </tr>
+</table>
 
-![Probes](assets/figures/paper/probes.png)
+<p align="center"><img src="assets/figures/paper/probes.png" alt="Open-loop replay versus closed-loop oracle, success against goal-localization error, and paired event outcomes" width="100%"></p>
 
-## Quick start
+## ⚡ Quick start
 
 ```bash
 git clone https://github.com/Physical-Super-Intelligence/PLUMB_Bench.git
@@ -140,7 +173,10 @@ python scripts/convert_to_rlds.py --hdf5 datasets/*.hdf5 --out rlds/ --format np
 python -I scripts/diagnostic_probes.py events --tasks 1-30 --workers 8 --out results/probe_events.json
 ```
 
-## Evaluation protocol for learned policies
+<details>
+<summary><b>🧪 Evaluation protocol for learned policies</b></summary>
+
+<br>
 
 Train on 50 oracle demonstrations per task and evaluate 50 episodes per task and condition on seeds disjoint from data
 generation (`scripts/evaluate_policy_suite.py --checkpoint ...`), plus the 921 event pairs. Report success rate with
@@ -148,7 +184,12 @@ generation (`scripts/evaluate_policy_suite.py --checkpoint ...`), plus the 921 e
 for events, and the peak contact force on the robot as logged telemetry. `scripts/train_policy.py` trains
 behavior-cloning and diffusion-policy baselines on the generated data.
 
-## Repository layout
+</details>
+
+<details>
+<summary><b>🗂️ Repository layout</b></summary>
+
+<br>
 
 | Path | Contents |
 | :--- | :--- |
@@ -163,7 +204,9 @@ behavior-cloning and diffusion-policy baselines on the generated data.
 single-body task set (`task_set="legacy"`), which is deprecated; the event protocol above is implemented in
 `scripts/diagnostic_probes.py events`.
 
-## Citation
+</details>
+
+## 📝 Citation
 
 ```bibtex
 @misc{sarowar2026plumbbench,
@@ -174,7 +217,7 @@ single-body task set (`task_set="legacy"`), which is deprecated; the event proto
 }
 ```
 
-## License
+## 📄 License
 
 [MIT](LICENSE). Robot and scene assets derived from MuJoCo Menagerie keep their own licenses; see
 `afford_pro/assets/robots/NOTICE.md`.
