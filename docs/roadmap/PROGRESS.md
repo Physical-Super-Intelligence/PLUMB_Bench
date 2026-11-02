@@ -112,10 +112,12 @@ server. Session 1 header (2026-10-17): no learned-policy results; L4 range uncal
   (`index.html`, `assets/`, `.nojekyll`); `planning.md`, `_config.yml`, and `BENCHMARK_RESULTS.md` were removed there.
   This work was ported onto it without a force push: the page is the root `index.html`, `docs/index.html` redirects
   to it, and the audit/probe evidence of 2026-11-01/02 (absent from the renamed repository) is included.
-- Open: unreferenced old assets are still in `assets/` (LIBERO-MAX GIFs, `paired-examples.mp4`,
-  `figures/performance_gap.svg` with unmeasured policy numbers, `figures/benchmark_overview.svg`, legacy videos),
-  `docs/videos/` and `docs/site/` are unused, and `docs/BENCHMARK_SPEC.md` still has the old framing; delete or
-  rewrite on the authors' decision.
+- Pushed and live (cf0e943; CI and Pages green). Then, at the authors' request, removed 51 unused files: the old
+  figures in `assets/figures/` (including the LIBERO-MAX figures and `performance_gap.svg` with unmeasured policy
+  numbers), the LIBERO-MAX event GIFs in `assets/media/`, logos of unaffiliated institutions, the old leaderboard
+  page `docs/site/`, the legacy-task videos `docs/videos/`, and `docs/images/`. All are recoverable from git history;
+  their generators (`scripts/build_site_data.py`, `scripts/export_project_videos.py`) are kept.
+- Open: `docs/BENCHMARK_SPEC.md` still has the old framing (A-43, A-47).
 
 ## Decisions required from the authors
 - D9 Generate `datasets/` for the benchmark (210 tasks x 50 demos with images), deferred. Estimate from the
